@@ -43,22 +43,26 @@ Saathi quantifies social health (0-100 score), provides AI companionship, ensure
 ## ✨ Key Features
 
 - 📊 **Social Health Tracking** - Quantifiable 0-100 isolation metric
-- 🤖 **AI Companion** - 24/7 emotional support (coming soon)
-- 💊 **Medicine Reminders** - Smart scheduling with notifications (coming soon)
-- 🎤 **Voice Control** - Hands-free accessibility (coming soon)
+- 🤖 **AI Companion** - GPT-3.5 powered 24/7 emotional support
+- 💊 **Medicine Reminders** - Smart scheduling with real-time notifications
+- 🎤 **Voice Control** - Hands-free accessibility with speech recognition
 - 👥 **Community Circles** - Interest-based social groups
 - 🎯 **Purpose Feed** - NGO volunteering and mentorship
 - 📖 **Memory Sharing** - Preserve life stories
 - 👨‍👩‍👧‍👦 **Family Bridge** - Easy family communication
+- 🔄 **Real-time Updates** - Socket.IO powered live notifications
+- 💾 **MongoDB Storage** - Persistent data storage
 
 ---
 
 ## 🛠️ Tech Stack
 
 **Frontend**: Next.js 14, React 18, Tailwind CSS, Framer Motion  
-**Backend**: Node.js, Express.js  
-**DevOps**: Docker, Docker Compose  
-**Future**: MongoDB, OpenAI GPT-3.5, Socket.IO
+**Backend**: Node.js, Express.js, Socket.IO  
+**Database**: MongoDB with Mongoose ODM  
+**AI**: OpenAI GPT-3.5 Turbo  
+**Real-time**: Socket.IO for live updates  
+**DevOps**: Docker, Docker Compose
 
 ---
 
@@ -74,11 +78,22 @@ docker-compose up -d
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY and MONGODB_URI
+
+# Start MongoDB (if running locally)
+# Option 1: Docker
+docker run -d -p 27017:27017 --name mongodb mongo:7.0
+
+# Option 2: Local installation
+mongod
+
 # Start Next.js dev server
 npm run dev
 
-# In another terminal, start backend
-npm run server
+# In another terminal, start enhanced backend
+node server/index-enhanced.js
 ```
 
 ---
@@ -89,7 +104,26 @@ npm run server
 2. Click "Get Started"
 3. Enter your name and age
 4. Complete daily check-in
-5. Explore community circles and activities
+5. Try the AI Companion (requires OpenAI API key)
+6. Explore community circles and activities
+7. Add medicine reminders
+8. Share memories with family
+
+---
+
+## 🤖 AI Features
+
+### AI Companion
+- Powered by OpenAI GPT-3.5 Turbo
+- Culturally sensitive conversations
+- Emotional support and loneliness detection
+- Fallback responses when API is unavailable
+
+### Real-time Features
+- Socket.IO for instant notifications
+- Live medicine reminders
+- Real-time social health updates
+- Family alerts
 
 ---
 
@@ -98,6 +132,8 @@ npm run server
 ```
 Saathi/
 ├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   └── ai-chat/       # AI companion endpoint
 │   ├── layout.jsx         # Root layout
 │   ├── page.jsx           # Home page
 │   ├── welcome/           # Welcome page
@@ -109,12 +145,15 @@ Saathi/
 │   ├── memories/          # Memory sharing
 │   └── family/            # Family bridge
 ├── server/                # Backend API
-│   ├── index.js           # Express server
+│   ├── models/            # MongoDB models
+│   │   └── User.js        # User schema
+│   ├── index-enhanced.js  # Express + Socket.IO server
 │   └── package.json       # Backend dependencies
 ├── public/                # Static assets
-├── docker-compose.yml     # Docker orchestration
+├── docker-compose.yml     # Docker orchestration (with MongoDB)
 ├── Dockerfile.frontend    # Next.js container
 ├── Dockerfile.backend     # Backend container
+├── .env.example           # Environment variables template
 └── package.json          # Frontend dependencies
 ```
 

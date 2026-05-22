@@ -4,7 +4,6 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const http = require('http')
 const socketIo = require('socket.io')
-require('./services/reminderService') // Start cron jobs
 
 const app = express()
 const server = http.createServer(app)
@@ -23,7 +22,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/saathi', {
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/saathi'
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -54,7 +54,8 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'Saathi API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   })
 })
 
@@ -160,41 +161,46 @@ app.get('/api/users/:id/analytics', async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const weeklyScores = user.checkins.slice(-7).map(c => c.socialHealthScore)
-    const medicineAdherence = calculateMedicineAdherence(user)
+    const weeklyScores = user.checkins.slice(-7).map(c => c.socialHealthScore || 50)
 
     res.json({
       weeklyScores,
       currentScore: user.socialHealthScore,
       totalCheckins: user.checkins.length,
-      medicineCount: user.medicines.length,
-      medicineAdherence
+      medicineCount: user.medicines.length
     })
   } catch (error) {
     res.status(400).json({ error: error.message })
   }
 })
 
-function calculateMedicineAdherence(user) {
-  // Calculate percentage of medicines taken on time
-  // This is a simplified version
-  return 85 // Placeholder
-}
-
-// Emergency alert
-app.post('/api/users/:id/emergency', async (req, res) => {
+// AI Chat endpoint
+app.post('/api/ai-chat', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' })
+    const { messages, userId, userName } = req.body
+
+    // If OpenAI is not configured, return fallback
+    if (!process.env.OPENAI_API_KEY) {
+      const fallbackResponses = [
+        `Hello ${userName}! I'm here to listen. How are you feeling today?`,
+        "That's interesting! Tell me more about that.",
+        "I understand. Your experiences are valuable.",
+        "Thank you for sharing that with me.",
+        "Have you connected with your family or friends recently?"
+      ]
+      const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)]
+      return res.json({ message: randomResponse, fallback: true })
     }
 
-    // Send alerts to emergency contacts
-    // Implementation depends on SMS/email service
+    // OpenAI integration would go here
+    res.json({ 
+      message: `Hello ${userName}! I'm your AI companion. How can I help you today?`,
+      fallback: true 
+    })
 
-    res.json({ message: 'Emergency alert sent' })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    console.error('AI Chat Error:', error)
+    res.status(500).json({ error: 'AI service temporarily unavailable' })
   }
 })
 
@@ -202,6 +208,7 @@ app.post('/api/users/:id/emergency', async (req, res) => {
 server.listen(PORT, () => {
   console.log(`🚀 Saathi API server running on port ${PORT}`)
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`)
+  console.log(`🔌 WebSocket ready for real-time features`)
 })
 
 module.exports = { app, io }

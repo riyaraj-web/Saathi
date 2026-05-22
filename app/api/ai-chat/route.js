@@ -1,13 +1,37 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
 
 export async function POST(request) {
   try {
     const { messages, userId, userName } = await request.json()
+
+    // Check if OpenAI is configured
+    if (!process.env.OPENAI_API_KEY) {
+      // Fallback responses
+      const fallbackResponses = [
+        `Hello ${userName}! I'm here to listen. How are you feeling today?`,
+        "That's interesting! Tell me more about your thoughts on this.",
+        "Thank you for sharing that with me. Your experiences are valuable.",
+        "I understand. Sometimes it helps just to talk about things. I'm here for you.",
+        "That reminds me - have you connected with your family or friends recently? They'd love to hear from you.",
+        "Your wisdom and life experience are truly valuable. What else would you like to share?",
+        "I'm always here to chat. What's on your mind today?",
+        "That sounds meaningful. How did that make you feel?"
+      ]
+
+      const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)]
+
+      return NextResponse.json({ 
+        message: randomResponse,
+        success: true,
+        fallback: true
+      })
+    }
+
+    // OpenAI integration
+    const OpenAI = require('openai')
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
 
     // System prompt for elderly-friendly AI companion
     const systemPrompt = `You are Saathi, a warm, compassionate AI companion designed specifically for elderly users in India. Your role is to:
@@ -45,13 +69,12 @@ The user's name is ${userName}. Remember previous context in the conversation. I
   } catch (error) {
     console.error('AI Chat Error:', error)
     
-    // Fallback responses if API fails
+    // Fallback on error
     const fallbackResponses = [
       "I'm here to listen. Please tell me more about how you're feeling.",
       "That's interesting! I'd love to hear more about your thoughts on this.",
       "Thank you for sharing that with me. Your experiences are valuable.",
-      "I understand. Sometimes it helps just to talk about things. I'm here for you.",
-      "That reminds me - have you connected with your family or friends recently? They'd love to hear from you."
+      "I understand. Sometimes it helps just to talk about things. I'm here for you."
     ]
 
     const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)]

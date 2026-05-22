@@ -1,4 +1,4 @@
-# Backend Dockerfile
+# Backend Dockerfile with MongoDB and Socket.IO support
 FROM node:18-alpine
 
 WORKDIR /app
@@ -14,4 +14,4 @@ COPY server/ .
 
 EXPOSE 5000
 
-CMD ["node", "index.js"]
+CMD ["node", "index-enhanced.js"]
