@@ -4,6 +4,7 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  output: 'standalone',
   env: {
     NEXT_PUBLIC_APP_NAME: 'Saathi - The Invisible Elder',
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',

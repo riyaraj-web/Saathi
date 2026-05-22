@@ -1,11 +1,26 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Sparkles, BookOpen, Users, Phone, Heart, Award, CheckCircle, MapPin, Clock, GraduationCap, HeartHandshake } from 'lucide-react'
+'use client'
 
-const Activities = ({ user }) => {
-  const navigate = useNavigate()
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, Sparkles, BookOpen, Users, Phone, Heart, Award, CheckCircle, MapPin, Clock, GraduationCap, HeartHandshake } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+export default function Activities() {
+  const router = useRouter()
+  const [user, setUser] = useState(null)
   const [completedActivities, setCompletedActivities] = useState([])
   const [activeTab, setActiveTab] = useState('daily') // 'daily' or 'purpose-feed'
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('saathiUser')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    } else {
+      router.push('/welcome')
+    }
+  }, [router])
+
+  if (!user) return null
 
   const activities = [
     {
@@ -204,7 +219,7 @@ const Activities = ({ user }) => {
       <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-b-3xl shadow-lg">
         <div className="max-w-4xl mx-auto">
           <button 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => router.push('/dashboard')}
             className="p-2 hover:bg-primary-600 rounded-full transition-colors mb-4"
           >
             <ArrowLeft className="w-7 h-7" />

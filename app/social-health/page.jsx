@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, TrendingUp, TrendingDown, Minus, Heart, Calendar, Award } from 'lucide-react'
+'use client'
 
-const SocialHealth = ({ user }) => {
-  const navigate = useNavigate()
-  const location = useLocation()
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, TrendingUp, TrendingDown, Minus, Heart, Calendar, Award } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+export default function SocialHealth() {
+  const router = useRouter()
+  const [user, setUser] = useState(null)
   const [showCelebration, setShowCelebration] = useState(false)
 
   useEffect(() => {
-    if (location.state?.justCompleted) {
-      setShowCelebration(true)
-      setTimeout(() => setShowCelebration(false), 3000)
+    const savedUser = localStorage.getItem('saathiUser')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    } else {
+      router.push('/welcome')
     }
-  }, [location])
+  }, [router])
+
+  if (!user) return null
 
   const getScoreColor = (score) => {
     if (score >= 70) return 'text-green-600'
@@ -73,7 +80,7 @@ const SocialHealth = ({ user }) => {
       <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-b-3xl shadow-lg">
         <div className="max-w-4xl mx-auto">
           <button 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => router.push('/dashboard')}
             className="p-2 hover:bg-primary-600 rounded-full transition-colors mb-4"
           >
             <ArrowLeft className="w-7 h-7" />
@@ -154,21 +161,21 @@ const SocialHealth = ({ user }) => {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Ways to Improve</h2>
           <div className="space-y-4">
             <button 
-              onClick={() => navigate('/community')}
+              onClick={() => router.push('/community')}
               className="w-full p-5 bg-white rounded-xl text-left hover:shadow-md transition-shadow"
             >
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Join a Community Circle</h3>
               <p className="text-gray-700">Connect with others who share your interests</p>
             </button>
             <button 
-              onClick={() => navigate('/activities')}
+              onClick={() => router.push('/activities')}
               className="w-full p-5 bg-white rounded-xl text-left hover:shadow-md transition-shadow"
             >
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Try a New Activity</h3>
               <p className="text-gray-700">Engage in purposeful activities that bring joy</p>
             </button>
             <button 
-              onClick={() => navigate('/family')}
+              onClick={() => router.push('/family')}
               className="w-full p-5 bg-white rounded-xl text-left hover:shadow-md transition-shadow"
             >
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Reach Out to Family</h3>
@@ -180,5 +187,3 @@ const SocialHealth = ({ user }) => {
     </div>
   )
 }
-
-export default SocialHealth

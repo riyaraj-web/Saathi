@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Users, Phone, Video, MessageCircle, Heart, Send, UserPlus } from 'lucide-react'
+'use client'
 
-const FamilyConnect = ({ user }) => {
-  const navigate = useNavigate()
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, Users, Phone, Video, MessageCircle, Heart, Send, UserPlus } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+export default function FamilyConnect() {
+  const router = useRouter()
+  const [user, setUser] = useState(null)
   const [message, setMessage] = useState('')
   const [familyMembers] = useState([
     {
@@ -13,6 +17,17 @@ const FamilyConnect = ({ user }) => {
       avatar: '👩',
       relationship: 'Daughter'
     },
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('saathiUser')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    } else {
+      router.push('/welcome')
+    }
+  }, [router])
+
+  if (!user) return null
     {
       id: 2,
       name: 'Arjun (Son)',
@@ -59,7 +74,7 @@ const FamilyConnect = ({ user }) => {
       <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white p-6 rounded-b-3xl shadow-lg">
         <div className="max-w-4xl mx-auto">
           <button 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => router.push('/dashboard')}
             className="p-2 hover:bg-primary-600 rounded-full transition-colors mb-4"
           >
             <ArrowLeft className="w-7 h-7" />
@@ -205,5 +220,3 @@ const FamilyConnect = ({ user }) => {
     </div>
   )
 }
-
-export default FamilyConnect

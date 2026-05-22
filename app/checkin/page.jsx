@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Smile, Meh, Frown, Users, Phone, Heart, Home } from 'lucide-react'
+'use client'
 
-const DailyCheckin = ({ user }) => {
-  const navigate = useNavigate()
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, Smile, Meh, Frown, Users, Phone, Heart, Home } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+export default function DailyCheckin() {
+  const router = useRouter()
+  const [user, setUser] = useState(null)
   const [step, setStep] = useState(1)
   const [responses, setResponses] = useState({
     mood: null,
@@ -12,6 +16,17 @@ const DailyCheckin = ({ user }) => {
     feltUseful: null,
     feltLonely: null
   })
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('saathiUser')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    } else {
+      router.push('/welcome')
+    }
+  }, [router])
+
+  if (!user) return null
 
   const questions = [
     {
@@ -94,7 +109,7 @@ const DailyCheckin = ({ user }) => {
       localStorage.setItem('invisibleElderUser', JSON.stringify(updatedUser))
 
       // Navigate to results
-      navigate('/social-health', { state: { justCompleted: true, score: socialHealthScore } })
+      router.push('/social-health')
     }
   }
 
@@ -106,7 +121,7 @@ const DailyCheckin = ({ user }) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <button 
-            onClick={() => step > 1 ? setStep(step - 1) : navigate('/dashboard')}
+            onClick={() => step > 1 ? setStep(step - 1) : router.push('/dashboard')}
             className="p-3 hover:bg-white rounded-full transition-colors"
           >
             <ArrowLeft className="w-7 h-7 text-gray-700" />
@@ -163,5 +178,3 @@ const DailyCheckin = ({ user }) => {
     </div>
   )
 }
-
-export default DailyCheckin

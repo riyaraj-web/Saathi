@@ -1,5 +1,5 @@
-import { Inter } from 'next/font/google'
 import './globals.css'
+import { Inter } from 'next/font/google'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -9,7 +9,6 @@ export const metadata = {
   title: 'Saathi - Your Companion for Meaningful Living',
   description: 'AI-powered companion app to combat senior loneliness with health tracking, medicine reminders, and voice assistance',
   keywords: 'senior care, loneliness, AI companion, medicine reminder, health tracking, elderly care',
-  authors: [{ name: 'Your Name' }],
   viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
   themeColor: '#f0701f',
 }
