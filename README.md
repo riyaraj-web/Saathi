@@ -180,16 +180,3 @@ docker-compose ps
 
 ---
 
-## 🤝 Contributing
-
-Contributions welcome! Fork, create a feature branch, and submit a PR.
-
----
-
-## 📄 License
-
-MIT License
-
----
-
-**Built with ❤️ to make every senior feel seen, heard, and valued.**
